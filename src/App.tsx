@@ -1,26 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { ChangeEvent, useState, FC, useCallback } from "react";
+import styled from "styled-components";
+import { MemoList } from "./MemoList";
+import { useMemoList } from "./hooks/useMemoList";
 
-function App() {
+export const App: FC = () => {
+  const [text, setText] = useState<string>("");
+  const { memos, addTodo, deleteTodo } = useMemoList();
+  const onChangeText = (e: ChangeEvent<HTMLInputElement>) => setText(e.target.value);
+  const onClickAdd = () => {
+    addTodo(text)
+    setText("");
+  };
+
+  const onClickDelete = useCallback((index: number) => {
+    deleteTodo(index);
+  }, [deleteTodo]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>簡単メモアプリ</h1>
+      <input type="text" value={text} onChange={onChangeText} />
+      <SButton onClick={onClickAdd}>追加</SButton>
+      <MemoList memos={memos} onClickDelete={onClickDelete} />
     </div>
   );
-}
+};
 
-export default App;
+const SButton = styled.button`
+  margin-left: 16px;
+`;
